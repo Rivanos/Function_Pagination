@@ -147,6 +147,7 @@ function pagination($contenu, $nbArticleVouluParPage){
   $contenuCoupé = (array_chunk_vertical($contenu, $nbDePages));
   // NOTE: création d'une fonction qui retourne le numéro de la page -1
   function suiv(){
+    if (isset($_GET["page"])) {
     if ($_GET["page"] > 1) {
       return $pagination = $_GET["page"] - 1;
     }
@@ -154,7 +155,9 @@ function pagination($contenu, $nbArticleVouluParPage){
       return 1;
     }
   }
+}
   function prec($nbDePages){
+    if (isset($_GET["page"])) {
     if ($_GET["page"] < $nbDePages) {
       return $pagination = $_GET["page"] + 1;
     }
@@ -162,6 +165,7 @@ function pagination($contenu, $nbArticleVouluParPage){
       return $pagination = $_GET["page"] ;
     }
   }
+}
   // NOTE: génération des balises ul
   ?><div class="container">
     <div class="row">
