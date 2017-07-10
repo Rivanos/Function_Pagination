@@ -132,21 +132,56 @@ function pagination($contenu, $nbArticleVouluParPage){
   // NOTE: nombre d'articles voulu +1 pour le for
   $nbArticleVouluParPageFor = $nbArticleVouluParPage + 1;
   // NOTE: retourne le nombre de page que l'on veut
-  $nbDePages = floor(count($contenu)/$nbArticleVouluParPage) + 1;
+  // NOTE: retourne le nombre de page en faisant le d'article divisé par le nombre d'article voulu sur la page
+   if ((count($contenu))%($nbArticleVouluParPage) == 0) {
+     // NOTE: si le nombre de page est un entier
+    $nbDePages = floor(count($contenu)/$nbArticleVouluParPage);
+  }
+  else {
+      // NOTE: si le nombre de page est un nombre décimal
+    $nbDePages = floor(count($contenu)/$nbArticleVouluParPage) + 1;
+  }
   // NOTE: retourne le nombre de page que l'on veut + 1 (pour le for)
   $nbDePagesFor = $nbDePages + 1;
   // NOTE: Coupe le tableau en d'autres tableaux de longueur choisis.
   $contenuCoupé = (array_chunk_vertical($contenu, $nbDePages));
+  // NOTE: création d'une fonction qui retourne le numéro de la page -1
+  function suiv(){
+    if ($_GET["page"] > 1) {
+      return $pagination = $_GET["page"] - 1;
+    }
+    else {
+      return 1;
+    }
+  }
+  function prec($nbDePages){
+    if ($_GET["page"] < $nbDePages) {
+      return $pagination = $_GET["page"] + 1;
+    }
+    else {
+      return $pagination = $_GET["page"] ;
+    }
+  }
+  // NOTE: génération des balises ul
+  ?><div class="container">
+    <div class="row">
+   <ul  class="pagination">
+      <li><a href="pagination.php?page=<?= suiv() ?>"rel="prev"><span class="glyphicon glyphicon-chevron-left"></span></a></li><?php
   // NOTE: génération des balises a en fonction du nombre de page calculé plus haut.
   for ($i= 1 ; $i < $nbDePagesFor ; $i++) {?>
-    <a href="index2.php?page=<?= $i?>"><?= $i ?></a> -
+    <li><a href="pagination.php?page=<?= $i?>"><?= $i ?></a></li>
   <?php }
+  ?>   <li><a href="pagination.php?page=<?= prec($nbDePages) ?>" rel="next"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+</ul>
+  <?php
 // NOTE: un foreach pour appliquer un for sur toutes les
   foreach ($contenuCoupé as $key => $value) {
     for ($i=1; $i < $nbDePagesFor ; $i++) {
       $j = $i - 1;
         if ($pagination == $i) {
+          // NOTE: vérifier si la table la table est donné.
           if (!empty($value[$j]["titre"]) && !empty($value[$j]["letexte"]) && !empty($value[$j]["ladate"])) {
+          echo "<div class='border'>";
           echo "<h3>".$value[$j]["titre"]."</h3>";
           echo "<br>";
           echo $value[$j]["letexte"];
@@ -154,20 +189,46 @@ function pagination($contenu, $nbArticleVouluParPage){
           echo "<br>";
           echo $value[$j]["ladate"];
           echo "<br>";
-          echo "<hr>";
+          echo "</div>";
         }
         }
     }
-    }
+  }?>
+    <ul  class="pagination">
+      <li><a href="pagination.php?page=<?= suiv() ?>"rel="prev"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+<?php
+   // NOTE: génération des balises a en fonction du nombre de page calculé plus haut.
+   for ($i= 1 ; $i < $nbDePagesFor ; $i++) {?>
+     <li><a href="pagination.php?page=<?= $i?>"><?= $i ?></a></li>
+   <?php }
+   ?>
+   <li><a href="pagination.php?page=<?= prec($nbDePages) ?>" rel="next"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+ </ul>
+<?php
 }
 ?>
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <title>Pagination</title>
+    <style media="screen">
+      .pagination>li>a,
+      .pagination>li>span {
+         border-radius: 50% !important;
+         margin: 0 5px;
+      }
+      .border {
+        border: 1px solid black;
+        padding: 1em;
+      }
+      .breadcrumb {
+        margin-bottom: 0px;
+      }
+    </style>
   </head>
   <body>
-    <?= pagination($contenu, 4) ?>
+    <?= pagination($contenu, 3) ?>
   </body>
 </html>
